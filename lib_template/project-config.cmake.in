@@ -1,0 +1,31 @@
+# project-config.cmake
+#
+# This file expects to be configured via the configure_package_config_file
+# function of the CMakePackageConfigHelpers module. The PROJECT_NAME will be
+# used as the name of the package, and used in the identifiers for variables
+# set by this script. For a project LibTurd, the following variables would be
+# set:
+#
+# LIBTURD_INCLUDE_DIRS
+# LIBTURD_LIBRARIES
+#
+# Note the conversion to uppercase. This is deliberate, because it's how I
+# think it should be.
+#
+# The variables INCLUDE_DIR and TARGET must be set before configuring this
+# file.
+
+# Required by CMakePackageConfigHelpers
+@PACKAGE_INIT@
+
+set_and_check(@PROJECT_NAME@_INCLUDE_DIRS "@PACKAGE_INCLUDE_DIR@")
+
+# If LibTurd's main target is not defined, then we must be in a project using
+# LibTurd as an external dependency. Import our saved targets into the current
+# project's cache.
+if(NOT TARGET @TARGET@)
+  string(TOLOWER @PROJECT_NAME@ _project_name)
+  include("${CMAKE_CURRENT_LIST_DIR}/${_project_name}-targets.cmake")
+endif()
+
+set(@PROJECT_NAME@_LIBRARIES @TARGET@)
